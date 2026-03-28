@@ -1,0 +1,537 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AI Chat Capture — Save ChatGPT, Claude, Gemini &amp; DeepSeek Conversations</title>
+<meta name="description" content="Auto-save &amp; search your AI conversations from ChatGPT, Gemini, Claude, Perplexity, Grok &amp; DeepSeek. Never lose a great AI idea again. Free Chrome extension for AI productivity."/>
+<meta name="keywords" content="save ChatGPT conversations, AI chat history, ChatGPT conversation saver, save Claude conversations, save Gemini chats, DeepSeek chat saver, AI idea capture, AI notes extension, Chrome extension AI productivity, save AI conversations, Perplexity AI saver, Grok chat history, AI conversation manager"/>
+<meta property="og:title" content="AI Chat Capture — Save &amp; Search ChatGPT, Claude, Gemini &amp; DeepSeek"/>
+<meta property="og:description" content="Auto-save your best AI conversations from ChatGPT, Gemini, Claude, Perplexity, Grok &amp; DeepSeek. Search everything instantly. Free Chrome extension."/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="AI Chat Capture — Never Lose a Great AI Idea Again"/>
+<meta name="twitter:description" content="Save &amp; search AI conversations from ChatGPT, Claude, Gemini, DeepSeek &amp; more. Free Chrome extension."/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a12;--bg1:#10101a;--bg2:#16162a;--bg3:#1e1e38;
+  --border:#28284a;--borderl:#36366a;
+  --text:#f0f0ff;--text2:#13131a;--text3:#55557a;
+  --accent:#7c6fee;--glow:rgba(124,111,238,0.25);
+  --green:#34d399;--blue:#60a5fa;--red:#f87171;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;line-height:1.6}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(10,10,18,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 24px}
+.nav-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px}
+.nav-logo{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:700;letter-spacing:-0.02em;color:var(--text);text-decoration:none;flex-shrink:0}
+.nav-logo-icon{font-size:22px;line-height:1}
+.nav-tabs{display:flex;gap:2px}
+.nav-tab{background:none;border:none;color:var(--text2);font-size:13px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;text-decoration:none;display:inline-block}
+.nav-tab:hover{color:var(--text);background:var(--bg2)}
+.nav-tab.active{color:var(--accent);background:rgba(124,111,238,.12)}
+.nav-cta{background:var(--accent);color:#fff;border:none;border-radius:9px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;text-decoration:none}
+.nav-cta:hover{background:#6b5de0;transform:translateY(-1px);box-shadow:0 4px 16px var(--glow)}
+
+/* ── PAGES ── */
+.page{display:none;max-width:1000px;margin:0 auto;padding:64px 24px 96px}
+.page.active{display:block}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:48px 0 72px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,111,238,.12);border:1px solid rgba(124,111,238,.25);border-radius:20px;padding:5px 16px;font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:28px}
+.hero h1{font-size:clamp(34px,5.5vw,56px);font-weight:800;letter-spacing:-.04em;line-height:1.08;margin-bottom:20px;background:linear-gradient(135deg,#d4d0ff 0%,#7c6fee 45%,#c4b5fd 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:18px;color:var(--text2);max-width:540px;margin:0 auto 36px;line-height:1.65}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#a78bfa);color:#fff;border:none;border-radius:11px;padding:14px 30px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;box-shadow:0 4px 24px var(--glow);text-decoration:none;display:inline-block}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--glow)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:11px;padding:14px 30px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;text-decoration:none;display:inline-block}
+.btn-ghost:hover{border-color:var(--borderl);color:var(--text)}
+
+/* hero platforms badge row */
+.platforms-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:72px}
+.plat{display:flex;align-items:center;gap:6px;background:var(--bg1);border:1px solid var(--border);border-radius:8px;padding:7px 13px;font-size:12px;font-weight:600;color:var(--text2)}
+.plat.free{border-color:rgba(52,211,153,.3);color:var(--green)}
+.pro-tag{font-size:9px;background:rgba(124,111,238,.2);color:var(--accent);border-radius:4px;padding:1px 5px;font-weight:700;margin-left:2px}
+
+/* ── SECTION HEADERS ── */
+.sec-label{text-align:center;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--accent);margin-bottom:10px;text-transform:uppercase}
+.sec-title{text-align:center;font-size:clamp(22px,3vw,34px);font-weight:800;letter-spacing:-.03em;margin-bottom:44px;color:var(--text)}
+
+/* ── FEATURES ── */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:88px}
+.feat{background:var(--bg1);border:1px solid var(--border);border-radius:16px;padding:26px;transition:border-color .2s}
+.feat:hover{border-color:var(--borderl)}
+.feat-icon{font-size:28px;margin-bottom:14px;display:block}
+.feat h3{font-size:15px;font-weight:700;margin-bottom:7px;color:var(--text)}
+.feat p{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* ── HOW IT WORKS ── */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:16px;margin-bottom:88px}
+.step-item{background:var(--bg1);border:1px solid var(--border);border-radius:16px;padding:26px;text-align:center;transition:border-color .2s}
+.step-item:hover{border-color:var(--borderl)}
+.step-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#a78bfa);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.step-item h3{font-size:14px;font-weight:700;margin-bottom:8px;color:var(--text)}
+.step-item p{font-size:12.5px;color:var(--text2);line-height:1.55}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:88px}
+.price-card{background:var(--bg1);border:2px solid var(--border);border-radius:18px;padding:26px;position:relative;overflow:hidden;transition:all .2s}
+.price-card:hover{border-color:var(--borderl);transform:translateY(-2px)}
+.price-card.popular{border-color:var(--accent);background:linear-gradient(160deg,var(--bg1) 0%,#1a1535 100%);transform:translateY(-4px)}
+.price-card.popular:hover{transform:translateY(-6px)}
+.popular-tag{position:absolute;top:0;right:0;background:linear-gradient(135deg,var(--accent),#a78bfa);color:#fff;font-size:9px;font-weight:800;padding:5px 12px;border-radius:0 16px 0 10px;letter-spacing:.06em}
+.price-name{font-size:11px;font-weight:700;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.1em}
+.price-amount{font-size:32px;font-weight:800;letter-spacing:-.04em;color:var(--text);line-height:1;margin-bottom:3px}
+.price-amount span{font-size:13px;font-weight:400;color:var(--text2)}
+.price-save{font-size:11.5px;color:var(--green);margin-bottom:16px;font-weight:600;min-height:18px}
+.price-div{height:1px;background:var(--border);margin:16px 0}
+.price-features{list-style:none}
+.price-features li{font-size:12.5px;color:var(--text2);padding:5px 0 5px 20px;position:relative;line-height:1.4}
+.price-features li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700;font-size:13px}
+.price-features li.no{color:var(--text3)}
+.price-features li.no::before{content:'✗';color:var(--text3)}
+.price-btn{width:100%;margin-top:18px;background:var(--bg2);border:1px solid var(--borderl);color:var(--text);border-radius:9px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;letter-spacing:-.01em}
+.price-btn:hover{background:var(--bg3);border-color:var(--accent);color:var(--accent)}
+.price-card.popular .price-btn{background:var(--accent);border-color:var(--accent);box-shadow:0 4px 16px var(--glow)}
+.price-card.popular .price-btn:hover{background:#6b5de0}
+
+/* ── FAQ ── */
+.faq-wrap{margin-bottom:88px;max-width:720px;margin-left:auto;margin-right:auto}
+.faq-item{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.faq-item.open{border-color:var(--borderl)}
+.faq-q{padding:18px 20px;font-size:14.5px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text);gap:12px;user-select:none}
+.faq-q span{flex:1}
+.faq-arrow{color:var(--accent);font-size:20px;transition:transform .25s;flex-shrink:0;line-height:1}
+.faq-item.open .faq-arrow{transform:rotate(45deg)}
+.faq-a{font-size:13.5px;color:var(--text2);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.faq-item.open .faq-a{max-height:220px;padding:0 20px 18px}
+
+/* ── CTA BANNER ── */
+.cta-banner{background:linear-gradient(135deg,#1a1535 0%,var(--bg3) 100%);border:1px solid var(--borderl);border-radius:20px;padding:56px 40px;text-align:center;margin-bottom:0}
+.cta-banner h2{font-size:clamp(22px,3vw,32px);font-weight:800;letter-spacing:-.03em;margin-bottom:12px}
+.cta-banner p{color:var(--text2);margin-bottom:28px;font-size:16px}
+
+/* ── POLICY / TERMS PAGES ── */
+.doc{max-width:740px;margin:0 auto}
+.doc-hero{margin-bottom:36px}
+.doc-hero h1{font-size:30px;font-weight:800;letter-spacing:-.03em;margin-bottom:8px}
+.doc-meta{font-size:12.5px;color:var(--text3);margin-bottom:20px}
+.doc-intro{background:rgba(124,111,238,.08);border-left:3px solid var(--accent);padding:14px 18px;border-radius:0 10px 10px 0;font-size:13.5px;color:var(--text2);line-height:1.65}
+.doc h2{font-size:17px;font-weight:700;color:var(--text);margin:40px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.doc p{font-size:14px;color:var(--text2);margin-bottom:12px;line-height:1.75}
+.doc ul{margin:8px 0 16px;padding-left:0;list-style:none}
+.doc ul li{font-size:14px;color:var(--text2);padding:5px 0 5px 22px;position:relative;line-height:1.6}
+.doc ul li::before{content:'•';position:absolute;left:0;color:var(--accent);font-size:18px;line-height:1.3}
+.doc ul.cross li::before{content:'✗';color:var(--red);font-size:12px;line-height:1.8}
+.doc table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0;border-radius:10px;overflow:hidden}
+.doc th{background:var(--bg2);color:var(--accent);font-weight:700;text-align:left;padding:11px 14px;border:1px solid var(--border)}
+.doc td{padding:10px 14px;border:1px solid var(--border);color:var(--text2);vertical-align:top}
+.doc tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+.doc a{color:var(--accent)}
+.doc a:hover{text-decoration:underline}
+.note-box{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);border-radius:10px;padding:13px 18px;font-size:13px;color:var(--green);margin:14px 0;line-height:1.6}
+.warn-box{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:13px 18px;font-size:13px;color:#fbbf24;margin:14px 0;line-height:1.6}
+.contact-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px 26px;margin-top:18px}
+.contact-box p{color:var(--text2);margin-bottom:5px;font-size:13.5px}
+.contact-box p:last-child{margin:0}
+
+/* ── FOOTER ── */
+footer{background:var(--bg1);border-top:1px solid var(--border);padding:32px 24px}
+.footer-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--text2)}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap}
+.footer-links a{font-size:12.5px;color:var(--text3);text-decoration:none;cursor:pointer;transition:color .15s}
+.footer-links a:hover{color:var(--text2)}
+.footer-copy{font-size:12px;color:var(--text3);width:100%;text-align:center;margin-top:8px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .nav-tabs{display:none}
+  .hero-sub{font-size:15px}
+  .page{padding:40px 16px 72px}
+  .cta-banner{padding:36px 20px}
+  .footer-inner{flex-direction:column;align-items:flex-start}
+  .footer-copy{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════ NAV ════════════ -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#home">
+      <span class="nav-logo-icon">💡</span>
+      AI Chat Capture
+    </a>
+    <div class="nav-tabs">
+      <a class="nav-tab active" href="#home">Home</a>
+      <a class="nav-tab" href="#privacy">Privacy Policy</a>
+      <a class="nav-tab" href="#terms">Terms of Use</a>
+    </div>
+    <a class="nav-cta" href="https://chromewebstore.google.com/detail/ai-chat-capture-chatgpt-c/godidpejephiefbbebmcefondmgkhjlg" target="_blank">Add to Chrome — Free</a>
+  </div>
+</nav>
+
+
+<!-- ════════════════════════════════════════
+     HOME
+════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">✦ Chrome Extension &nbsp;·&nbsp; Free to Start &nbsp;·&nbsp; 6 AI Platforms</div>
+    <h1>Save &amp; Search Your<br/>AI Conversations</h1>
+    <p class="hero-sub">AI Chat Capture automatically saves your best ideas from ChatGPT, Gemini, Claude, Perplexity, Grok &amp; DeepSeek — so every insight is searchable, forever. Never lose a great AI idea again.</p>
+    <div class="hero-btns">
+      <a class="btn-primary" href="https://chromewebstore.google.com/detail/ai-chat-capture-chatgpt-c/godidpejephiefbbebmcefondmgkhjlg" target="_blank">⚡ Add to Chrome — It's Free</a>
+      <a class="btn-ghost" href="#pricing" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">See Pricing ↓</a>
+    </div>
+    <div class="platforms-row">
+      <div class="plat free">🤖 ChatGPT <span style="font-size:10px;font-weight:800;margin-left:2px">FREE</span></div>
+      <div class="plat free">💎 Gemini <span style="font-size:10px;font-weight:800;margin-left:2px">FREE</span></div>
+      <div class="plat">🟠 Claude <span class="pro-tag">PRO</span></div>
+      <div class="plat">🔍 Perplexity <span class="pro-tag">PRO</span></div>
+      <div class="plat">⚡ Grok <span class="pro-tag">PRO</span></div>
+      <div class="plat">🐋 DeepSeek <span class="pro-tag">PRO</span></div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="sec-label">Why AI Chat Capture</div>
+  <div class="sec-title">The best way to save AI conversations</div>
+  <div class="features-grid">
+    <div class="feat"><span class="feat-icon">⚡</span><h3>Auto-Save AI Chats</h3><p>Set it once and forget it. Your ChatGPT, Claude, Gemini &amp; DeepSeek conversations are saved automatically — no clicking, no copying.</p></div>
+    <div class="feat"><span class="feat-icon">🔍</span><h3>Search AI History</h3><p>Search all your saved AI conversations in milliseconds. Find that ChatGPT solution or Claude answer from weeks ago in seconds.</p></div>
+    <div class="feat"><span class="feat-icon">🎯</span><h3>Filter by Platform</h3><p>Filter by ChatGPT, Gemini, Claude, DeepSeek, Grok or Perplexity. Find exactly what you need, exactly when you need it.</p></div>
+    <div class="feat"><span class="feat-icon">🔒</span><h3>100% Private</h3><p>AI conversations stay on YOUR device only. Nothing is uploaded without your permission. Your chat history, your control.</p></div>
+    <div class="feat"><span class="feat-icon">📋</span><h3>One-Click Copy</h3><p>Copy any saved AI idea to your clipboard instantly — perfect for notes, docs, or sharing with your team.</p></div>
+    <div class="feat"><span class="feat-icon">💾</span><h3>Export AI Chats</h3><p>Export your entire AI conversation library as JSON. Take your chat history with you — always. No lock-in, ever.</p></div>
+  </div>
+
+  <!-- How it works -->
+  <div class="sec-label">Setup in 30 Seconds</div>
+  <div class="sec-title">How to save AI conversations</div>
+  <div class="steps">
+    <div class="step-item"><div class="step-num">1</div><h3>Install Free</h3><p>Add AI Chat Capture from the Chrome Web Store. Works with ChatGPT, Gemini, Claude, DeepSeek &amp; more. No account needed.</p></div>
+    <div class="step-item"><div class="step-num">2</div><h3>30s Setup</h3><p>Choose which AI platforms to capture — ChatGPT, Gemini, Claude, Perplexity, Grok, or DeepSeek.</p></div>
+    <div class="step-item"><div class="step-num">3</div><h3>Use AI Normally</h3><p>Chat with your AI tools as always. Conversations are captured automatically in the background.</p></div>
+    <div class="step-item"><div class="step-num">4</div><h3>Search Your AI History</h3><p>Open the extension anytime to search, copy, and revisit your best AI conversations and ideas.</p></div>
+  </div>
+
+  <!-- Pricing -->
+  <div id="pricing"></div>
+  <div class="sec-label">Simple Pricing</div>
+  <div class="sec-title">Start free, upgrade when ready</div>
+  <div class="pricing-grid" style="margin-bottom:88px">
+    <div class="price-card">
+      <div class="price-name">Free</div>
+      <div class="price-amount">₹0</div>
+      <div class="price-save">Forever free · No credit card</div>
+      <div class="price-div"></div>
+      <ul class="price-features">
+        <li>ChatGPT + Gemini</li>
+        <li>20 ideas saved</li>
+        <li>Search &amp; export</li>
+        <li class="no">Claude, Perplexity, Grok, DeepSeek</li>
+        <li class="no">Unlimited saves</li>
+      </ul>
+      <button class="price-btn" onclick="window.open('https://chromewebstore.google.com/detail/ai-chat-capture-chatgpt-c/godidpejephiefbbebmcefondmgkhjlg','_blank')">Add to Chrome Free</button>
+    </div>
+    <div class="price-card">
+      <div class="price-name">Monthly</div>
+      <div class="price-amount">₹100<span>/mo</span></div>
+      <div class="price-save">Cancel anytime</div>
+      <div class="price-div"></div>
+      <ul class="price-features">
+        <li>All 6 platforms</li>
+        <li>Unlimited saves</li>
+        <li>Search &amp; export</li>
+        <li>Priority support</li>
+      </ul>
+      <button class="price-btn" onclick="window.open('https://chromewebstore.google.com/detail/ai-chat-capture-chatgpt-c/godidpejephiefbbebmcefondmgkhjlg','_blank')">Get Pro Monthly</button>
+    </div>
+    <div class="price-card popular">
+      <div class="popular-tag">✦ BEST VALUE</div>
+      <div class="price-name">6 Months</div>
+      <div class="price-amount">₹500<span>/6mo</span></div>
+      <div class="price-save">Save ₹100 · Only ₹83/month</div>
+      <div class="price-div"></div>
+      <ul class="price-features">
+        <li>All 6 platforms</li>
+        <li>Unlimited saves</li>
+        <li>Search &amp; export</li>
+        <li>Priority support</li>
+      </ul>
+      <button class="price-btn" onclick="window.open('https://chromewebstore.google.com/detail/ai-chat-capture-chatgpt-c/godidpejephiefbbebmcefondmgkhjlg','_blank')">Get Pro 6 Month</button>
+    </div>
+    <div class="price-card">
+      <div class="price-name">Annual</div>
+      <div class="price-amount">₹1000<span>/yr</span></div>
+      <div class="price-save">Save ₹200 · Only ₹83/month</div>
+      <div class="price-div"></div>
+      <ul class="price-features">
+        <li>All 6 platforms</li>
+        <li>Unlimited saves</li>
+        <li>Search &amp; export</li>
+        <li>Early access features</li>
+      </ul>
+      <button class="price-btn" onclick="window.open('https://chromewebstore.google.com/detail/ai-chat-capture-chatgpt-c/godidpejephiefbbebmcefondmgkhjlg','_blank')">Get Pro Annual</button>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="sec-label">FAQ</div>
+  <div class="sec-title">Common questions</div>
+  <div class="faq-wrap">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Is my data private and secure?</span><span class="faq-arrow">+</span></div>
+      <div class="faq-a">Yes. All your AI conversations are stored locally on your device using Chrome's built-in storage. Nothing is uploaded to any server. Your data never leaves your browser without your explicit consent.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Does it work with free ChatGPT (no Plus)?</span><span class="faq-arrow">+</span></div>
+      <div class="faq-a">Yes. AI Chat Capture works with any version of ChatGPT — free, Plus, or Team. You don't need a paid ChatGPT subscription to use this extension.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>What happens to my data if I uninstall?</span><span class="faq-arrow">+</span></div>
+      <div class="faq-a">Locally stored conversations are removed when you uninstall. Before uninstalling, export all your saved ideas as a JSON file from the extension popup — it takes one click.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Can I cancel my Pro subscription anytime?</span><span class="faq-arrow">+</span></div>
+      <div class="faq-a">Yes, anytime. After cancellation, you keep Pro access until the end of your billing period, then revert to Free. No questions asked.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Which AI platforms are supported?</span><span class="faq-arrow">+</span></div>
+      <div class="faq-a">Free plan: ChatGPT and Google Gemini. Pro plan: ChatGPT, Google Gemini, Claude (claude.ai), Perplexity AI, Grok (grok.com), and DeepSeek (chat.deepseek.com) — all 6 supported platforms.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Is there a refund policy?</span><span class="faq-arrow">+</span></div>
+      <div class="faq-a">Yes. We offer a 7-day refund from the date of first payment if you're not satisfied. Contact us at support@aichatcapture.com and we'll process it promptly.</div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-banner">
+    <h2>Start saving AI conversations today</h2>
+    <p>Free forever for ChatGPT and Gemini. Upgrade for Claude, DeepSeek, Grok &amp; Perplexity. No credit card required.</p>
+    <a class="btn-primary" href="https://chromewebstore.google.com/detail/ai-chat-capture-chatgpt-c/godidpejephiefbbebmcefondmgkhjlg" target="_blank">⚡ Add to Chrome — It's Free</a>
+  </div>
+
+</div><!-- /home -->
+
+
+<!-- ════════════════════════════════════════
+     PRIVACY POLICY
+════════════════════════════════════════ -->
+<div class="page" id="page-privacy">
+<div class="doc">
+  <div class="doc-hero">
+    <h1>Privacy Policy</h1>
+    <p class="doc-meta">Last updated: March 25, 2026 &nbsp;·&nbsp; Applies to AI Chat Capture Chrome Extension</p>
+    <div class="doc-intro">This Privacy Policy explains how AI Chat Capture ("the Extension", "we", "our") collects, uses, and protects your information. By installing the Extension, you agree to the practices described here.</div>
+  </div>
+
+  <h2>1. What We Collect</h2>
+  <table>
+    <tr><th>Data Type</th><th>What It Is</th><th>Where Stored</th></tr>
+    <tr><td>AI Conversations</td><td>Text from your AI chats on enabled platforms</td><td>Your device only (IndexedDB)</td></tr>
+    <tr><td>Settings</td><td>Enabled platforms, capture mode, onboarding status</td><td>Your device (chrome.storage)</td></tr>
+    <tr><td>Account Info</td><td>Email + user ID (only if you sign in for Pro)</td><td>Supabase — encrypted at rest</td></tr>
+    <tr><td>Plan Status</td><td>Free or Pro, subscription ID</td><td>Supabase</td></tr>
+    <tr><td>Feedback</td><td>Messages you voluntarily submit via feedback form</td><td>Supabase</td></tr>
+    <tr><td>Payment Data</td><td>Handled entirely by Razorpay — we never see card details</td><td>Razorpay (not us)</td></tr>
+  </table>
+
+  <h2>2. What We Do NOT Collect</h2>
+  <ul class="cross">
+    <li>We do NOT read or store your browsing history</li>
+    <li>We do NOT access websites other than the AI platforms you enable</li>
+    <li>We do NOT collect passwords, financial data, or personal files</li>
+    <li>We do NOT sell your data to advertisers or third parties</li>
+    <li>We do NOT store credit card numbers or payment details</li>
+    <li>We do NOT track your activity outside supported AI platforms</li>
+  </ul>
+
+  <h2>3. How Your Data Is Stored</h2>
+  <p>All AI conversation content is stored locally on your device using Chrome's IndexedDB. This data never leaves your device unless you explicitly export it.</p>
+  <div class="note-box">🔒 Your conversations are stored only on your device. No conversation content is ever uploaded to our servers or any third-party server.</div>
+  <p>If you sign in with Google for Pro, your email and plan status are stored in our database (Supabase), encrypted at rest and in transit.</p>
+
+  <h2>4. Permissions We Request</h2>
+  <table>
+    <tr><th>Permission</th><th>Why We Need It</th></tr>
+    <tr><td>storage</td><td>Save your ideas and settings locally on your device</td></tr>
+    <tr><td>tabs</td><td>Detect when you navigate to a supported AI platform</td></tr>
+    <tr><td>activeTab</td><td>Read conversation content from the active AI tab only</td></tr>
+    <tr><td>scripting</td><td>Inject capture script into supported AI pages</td></tr>
+    <tr><td>identity</td><td>Optional Google Sign-In for Pro plan features</td></tr>
+  </table>
+  <p>We only inject scripts into: <strong>chatgpt.com, gemini.google.com, claude.ai, perplexity.ai, grok.com, chat.deepseek.com</strong>. No other websites.</p>
+
+  <h2>5. Third-Party Services</h2>
+  <table>
+    <tr><th>Service</th><th>Purpose</th><th>Privacy Policy</th></tr>
+    <tr><td>Supabase</td><td>Authentication and plan management database</td><td><a href="https://supabase.com/privacy" target="_blank">supabase.com/privacy</a></td></tr>
+    <tr><td>Google OAuth</td><td>Sign-in (optional, Pro only)</td><td><a href="https://policies.google.com/privacy" target="_blank">policies.google.com/privacy</a></td></tr>
+    <tr><td>Razorpay</td><td>Payment processing for Pro subscriptions</td><td><a href="https://razorpay.com/privacy/" target="_blank">razorpay.com/privacy</a></td></tr>
+  </table>
+  <div class="warn-box">⚠️ When upgrading to Pro, you are redirected to Razorpay's secure payment page. AI Chat Capture never sees or stores your payment card details.</div>
+
+  <h2>6. Data Retention</h2>
+  <ul>
+    <li>Locally stored conversation data is retained until you delete it or uninstall the extension</li>
+    <li>Account data (email, plan) is retained while your account is active</li>
+    <li>You may request deletion of your account data at any time by contacting us</li>
+    <li>Feedback messages are retained for up to 12 months</li>
+  </ul>
+
+  <h2>7. Your Rights</h2>
+  <ul>
+    <li><strong>Access:</strong> Request a copy of the data we hold about you</li>
+    <li><strong>Deletion:</strong> Request deletion of your account and associated data</li>
+    <li><strong>Portability:</strong> Export your locally stored ideas anytime from the extension popup</li>
+    <li><strong>Correction:</strong> Request correction of inaccurate data</li>
+  </ul>
+
+  <h2>8. Children's Privacy</h2>
+  <p>AI Chat Capture is not directed at children under 13. We do not knowingly collect personal information from children. If you believe a child has provided us with personal information, contact us and we will promptly delete it.</p>
+
+  <h2>9. Changes to This Policy</h2>
+  <p>We may update this policy from time to time. The "last updated" date above will reflect any changes. Continued use after changes constitutes acceptance of the updated policy.</p>
+
+  <h2>10. Contact Us</h2>
+  <div class="contact-box">
+    <p><strong style="color:var(--text);font-size:15px">AI Chat Capture</strong></p>
+    <p>📧 Email: <a href="mailto:support@aichatcapture.com">support@aichatcapture.com</a></p>
+    <p>🌐 Website: aichatcapture.blogspot.com</p>
+    <p>📍 India</p>
+    <p style="margin-top:10px;font-size:12.5px;color:var(--text3)">We respond to all privacy-related inquiries within 7 business days.</p>
+  </div>
+</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     TERMS OF USE
+════════════════════════════════════════ -->
+<div class="page" id="page-terms">
+<div class="doc">
+  <div class="doc-hero">
+    <h1>Terms of Use</h1>
+    <p class="doc-meta">Last updated: March 25, 2026 &nbsp;·&nbsp; Applies to AI Chat Capture Chrome Extension</p>
+    <div class="doc-intro">Please read these Terms carefully before using AI Chat Capture. By installing or using the Extension, you agree to be bound by these terms.</div>
+  </div>
+
+  <h2>1. Acceptance of Terms</h2>
+  <p>By downloading, installing, or using AI Chat Capture ("the Extension"), you agree to these Terms of Use and our Privacy Policy. If you do not agree, do not install or use the Extension.</p>
+
+  <h2>2. Description of Service</h2>
+  <p>AI Chat Capture is a Chrome browser extension that automatically captures, stores, and organises conversations from supported AI platforms including ChatGPT, Google Gemini, Claude, Perplexity AI, and Grok. All captured data is stored locally on your device.</p>
+
+  <h2>3. Eligibility</h2>
+  <ul>
+    <li>You must be at least 13 years of age to use this Extension</li>
+    <li>You must have a valid Google Chrome browser installed</li>
+    <li>By using the Extension, you represent that you meet these requirements</li>
+  </ul>
+
+  <h2>4. Free and Pro Plans</h2>
+  <p><strong style="color:var(--text)">Free Plan:</strong> Available at no cost. Includes ChatGPT and Gemini, up to 20 saved ideas, search, and export. No credit card required.</p>
+  <p><strong style="color:var(--text)">Pro Plan:</strong> A paid subscription providing access to all 6 platforms and unlimited saves.</p>
+  <ul>
+    <li>Monthly: ₹100/month — cancel anytime</li>
+    <li>6 Months: ₹500 — save ₹100</li>
+    <li>Annual: ₹1,000/year — save ₹200</li>
+  </ul>
+  <p>All payments are processed by Razorpay. Subscriptions auto-renew unless cancelled before the next billing date.</p>
+
+  <h2>5. Refund Policy</h2>
+  <p>We offer a <strong style="color:var(--text)">7-day refund</strong> from the date of first payment if you are not satisfied with the Pro plan. After 7 days, no refunds are issued for the current billing period. To request a refund, contact <a href="mailto:support@aichatcapture.com">support@aichatcapture.com</a>.</p>
+
+  <h2>6. Acceptable Use</h2>
+  <p>You agree NOT to:</p>
+  <ul class="cross">
+    <li>Reverse engineer, decompile, or modify the Extension</li>
+    <li>Use the Extension to scrape or harvest data at scale for commercial purposes</li>
+    <li>Circumvent plan limits or access Pro features without a valid subscription</li>
+    <li>Use the Extension in violation of any AI platform's own terms of service</li>
+    <li>Resell, sublicense, or redistribute the Extension</li>
+  </ul>
+
+  <h2>7. Intellectual Property</h2>
+  <p>The Extension's code, design, and branding are owned by AI Chat Capture. All rights reserved. Your conversation data belongs solely to you.</p>
+
+  <h2>8. Third-Party Platforms</h2>
+  <p>AI Chat Capture integrates with third-party AI platforms. We are not affiliated with, endorsed by, or partnered with OpenAI, Google, Anthropic, Perplexity, or xAI. Use of those platforms is governed by their own separate terms of service.</p>
+
+  <h2>9. Disclaimer of Warranties</h2>
+  <p>The Extension is provided "as is" without warranties of any kind. We do not guarantee uninterrupted operation. AI platforms may update their interfaces at any time, which may temporarily affect the Extension's functionality. We will work to restore compatibility promptly.</p>
+
+  <h2>10. Limitation of Liability</h2>
+  <p>To the maximum extent permitted by applicable law, AI Chat Capture shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Extension, including any loss of saved conversations or data.</p>
+
+  <h2>11. Changes to Terms</h2>
+  <p>We may update these Terms at any time. The updated date above will reflect the change. Continued use of the Extension after changes constitutes your acceptance of the new Terms.</p>
+
+  <h2>12. Governing Law</h2>
+  <p>These Terms are governed by the laws of India. Any disputes shall be subject to the exclusive jurisdiction of the courts of India.</p>
+
+  <h2>13. Contact</h2>
+  <div class="contact-box">
+    <p><strong style="color:var(--text);font-size:15px">AI Chat Capture</strong></p>
+    <p>📧 Email: <a href="mailto:support@aichatcapture.com">gajjarjay52@gmail.com</a></p>
+    <p>📍 India</p>
+  </div>
+</div>
+</div>
+
+
+<!-- ════════════ FOOTER ════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">💡 AI Chat Capture</div>
+    <div class="footer-links">
+      <a href="#home">Home</a>
+      <a href="#privacy">Privacy Policy</a>
+      <a href="#terms">Terms of Use</a>
+      <a href="mailto:support@aichatcapture.com">Contact</a>
+    </div>
+    <div class="footer-copy">© 2026 AI Chat Capture. All rights reserved. Made in India 🇮🇳</div>
+  </div>
+</footer>
+
+<script>
+var tabs = document.querySelectorAll('.nav-tab');
+var pages = document.querySelectorAll('.page');
+var PAGE_IDX = { home: 0, privacy: 1, terms: 2 };
+
+function route() {
+  var id = (location.hash || '#home').replace('#', '') || 'home';
+  if (PAGE_IDX[id] === undefined) id = 'home';
+  var idx = PAGE_IDX[id];
+  pages.forEach(function(p) { p.classList.remove('active'); });
+  tabs.forEach(function(t) { t.classList.remove('active'); });
+  var page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  if (tabs[idx]) tabs[idx].classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+window.addEventListener('hashchange', route);
+route(); // run on load
+
+function toggleFaq(el) {
+  var item = el.closest('.faq-item');
+  var wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(function(i) { i.classList.remove('open'); });
+  if (!wasOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>
